@@ -132,10 +132,10 @@ pipeline {
                     hostname
                     whoami
 
-                    echo "Deploying image: $FULL_IMAGE"
+		    export FINAL_IMAGE="$1"
 
                     kubectl create deployment mycicd \
-                        --image="$FULL_IMAGE" \
+                        --image="$FINAL_IMAGE" \
                         --replicas=2 \
                         --dry-run=client \
                         -o yaml | kubectl apply -f -
