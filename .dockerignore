@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Test files
+tests/
+__tests__/
+**/*.test.js
+**/*.spec.js
+
+# Coverage reports
+coverage/
+
+# Git
+.git/
+.gitignore
+
+# Jenkins and SonarQube
+Jenkinsfile
+.scannerwork/
+sonar-project.properties
+
+# Docker deployment files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+*.log
+npm-debug.log*
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Editor and operating system files
+.DS_Store
+.vscode/
+.idea/
+
+# Documentation
+README.md
