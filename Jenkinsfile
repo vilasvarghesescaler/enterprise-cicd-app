@@ -13,12 +13,12 @@ pipeline {
         DOCKER_CREDS_ID = 'dockerhub-creds'
         DOCKER_REGISTRY = 'docker.io'
       //   Replace yourdockerhubusername with your actual DockerHub username
-        DOCKER_IMAGE_NAME = "yourdockerhubusername/enterprise-app"
+        DOCKER_IMAGE_NAME = "vilasvarghese/enterprise-app"
         IMAGE_TAG = "v1.0.${BUILD_NUMBER}"
         FULL_IMAGE = "${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
         //    Use the PUBLIC IP of your Prod server unless all 4 instances
         //     are in the same VPC subnet (where private IPs route correctly).
-        PROD_SERVER_IP = "10.0.1.50" // REPLACE WITH YOUR PROD SERVER PRIVATE IP
+        PROD_SERVER_IP = "54.227.186.19" // REPLACE WITH YOUR PROD SERVER PRIVATE IP
         PROD_USER = "deploy_user"
     }
 
