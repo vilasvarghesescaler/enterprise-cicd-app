@@ -1,6 +1,6 @@
 pipeline {
 
-    agent {label='worker1'}
+    agent {label 'worker1'}
 
     environment {
         DOCKER_CREDS_ID = 'dockerhub-creds'
