@@ -18,8 +18,8 @@ pipeline {
         FULL_IMAGE = "${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
         //    Use the PUBLIC IP of your Prod server unless all 4 instances
         //     are in the same VPC subnet (where private IPs route correctly).
-        PROD_SERVER_IP = "172.31.19.189" // REPLACE WITH YOUR PROD SERVER PRIVATE IP
-        PROD_USER = "jenkins"
+        PROD_SERVER_IP = "172.31.16.15" // REPLACE WITH YOUR PROD SERVER PRIVATE IP
+        PROD_USER = "deploy_user"
     }
 
 
