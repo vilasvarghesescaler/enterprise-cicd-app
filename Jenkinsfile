@@ -6,13 +6,13 @@ pipeline {
         DOCKER_CREDS_ID = 'dockerhub-creds'
         DOCKER_REGISTRY = 'docker.io'
 
-        DOCKER_IMAGE_NAME = 'vilasvarghese/enterprise-app'
+        DOCKER_IMAGE_NAME = 'vilasvarghese/enterprise-demo-app'
 
         IMAGE_TAG = "v1.0.${BUILD_NUMBER}"
 
         FULL_IMAGE = "${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
 
-        PROD_SERVER_IP = '172.31.16.15'
+        PROD_SERVER_IP = '172.31.18.247'
 
         PROD_USER = 'deploy_user'
     }
