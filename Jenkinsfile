@@ -5,9 +5,9 @@ pipeline {
     }*/
 	agent any
  
-   tools {
+/*   tools {
 	    nodejs 'NodeJS-24'
-	}
+	}*/
 
     environment {
         DOCKER_CREDS_ID = 'dockerhub-creds'
