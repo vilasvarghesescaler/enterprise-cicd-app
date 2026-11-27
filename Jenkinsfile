@@ -131,7 +131,7 @@ pipeline {
                             # Prune old images to prevent disk space exhaustion
                          #   docker image prune -a -f --filter "until=24h"
 			kubectl create deployment mycicd \
-  			  --image=$DOCKER_IMAGE \
+  			  --image=$FULL_IMAGE \
    			  --replicas=2 \
     			  --dry-run=client \
     			  -o yaml | kubectl apply -f -
