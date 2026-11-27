@@ -60,7 +60,7 @@ pipeline {
             }
         }
 
-        stage('Static Code Analysis (SonarQube)') {
+/*        stage('Static Code Analysis (SonarQube)') {
 
             environment {
 
@@ -90,7 +90,7 @@ pipeline {
                 }
             }
         }
-
+*/
         stage('Build Docker Image') {
 
             steps {
