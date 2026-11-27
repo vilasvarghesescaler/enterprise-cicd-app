@@ -163,22 +163,45 @@ EOF
 
 
 
-        stage('Production Health Check') {
-            steps {
-                echo "Verifying application health on Production Server..."
-                // Poll the /health endpoint. Fails the pipeline if it doesn't return HTTP 200 within 60 seconds
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitUntil {
-                        script {
-                            def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${PROD_SERVER_IP}/health", returnStdout: true).trim()
-                            return response == "200"
-                        }
-                    }
-                }
-            }
-        }
-    }
+stage('Production Health Check') {
+    steps {
+        echo 'Verifying application health on Production Server...'
 
+        timeout(time: 2, unit: 'MINUTES') {
+
+            sshagent(credentials: ['prod-ssh-key']) {
+
+                sh '''
+                    ssh -o StrictHostKeyChecking=yes \
+                        -o BatchMode=yes \
+                        -o ConnectTimeout=10 \
+                        "$PROD_USER@$PROD_SERVER_IP" \
+                        bash -s <<'EOF'
+
+                        set -euo pipefail
+
+                        SERVICE_IP=$(kubectl get svc mycicd \
+                            -o jsonpath='{.spec.clusterIP}')
+
+                        echo "ClusterIP: $SERVICE_IP"
+
+                        curl -fsS \
+                            --retry 5 \
+                            --retry-connrefused \
+                            --retry-delay 3 \
+                            --connect-timeout 5 \
+                            --max-time 10 \
+                            "http://${SERVICE_IP}/health"
+
+                        echo ""
+                        echo "Application health check successful!"
+
+EOF
+                '''
+ 		           }
+        		}
+    		}
+	}
 
     post {
         always {
