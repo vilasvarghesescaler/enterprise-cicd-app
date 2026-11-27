@@ -60,7 +60,7 @@ pipeline {
             }
         }
 
-/*        stage('Static Code Analysis (SonarQube)') {
+        stage('Static Code Analysis (SonarQube)') {
 
             environment {
 
@@ -73,7 +73,7 @@ pipeline {
 
                 withSonarQubeEnv('SonarQube-Enterprise') {
 
-                    sh "${scannerHome}/bin/sonar-scanner"
+                    sh "${scannerHome}/bin/sonar-scanner -X"
                 }
             }
         }
@@ -90,7 +90,7 @@ pipeline {
                 }
             }
         }
-*/
+
         stage('Build Docker Image') {
 
             steps {
