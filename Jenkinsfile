@@ -5,10 +5,6 @@ pipeline {
     }*/
 	agent any
  
-/*   tools {
-	    nodejs 'NodeJS-24'
-	}*/
-
     environment {
         DOCKER_CREDS_ID = 'dockerhub-creds'
         DOCKER_REGISTRY = 'docker.io'
@@ -120,21 +116,30 @@ pipeline {
                 sshagent(credentials: ['prod-ssh-key']) {
                     sh """
                         # 1. Transfer the docker-compose.yml file to the target server
-                        scp -o StrictHostKeyChecking=no docker-compose.yml ${PROD_USER}@${PROD_SERVER_IP}:/home/${PROD_USER}/docker-compose.yml
+                        #scp -o StrictHostKeyChecking=no docker-compose.yml ${PROD_USER}@${PROD_SERVER_IP}:/home/${PROD_USER}/docker-compose.yml
                         
                         # 2. Execute SSH commands to pull the new image and restart the containers
-                        ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_SERVER_IP} '
+                        #ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_SERVER_IP} '
                             export DOCKER_IMAGE=${FULL_IMAGE}
                             
                             # Pull the specific new image
-                            docker pull ${FULL_IMAGE}
+                        #    docker pull ${FULL_IMAGE}
                             
                             # Restart the service with Docker Compose (down and up)
-                            docker-compose -f /home/${PROD_USER}/docker-compose.yml up -d --remove-orphans
+                         #   docker-compose -f /home/${PROD_USER}/docker-compose.yml up -d --remove-orphans
                             
                             # Prune old images to prevent disk space exhaustion
-                            docker image prune -a -f --filter "until=24h"
+                         #   docker image prune -a -f --filter "until=24h"
+			kubectl create deployment mycicd \
+  			  --image=$DOCKER_IMAGE \
+   			  --replicas=2 \
+    			  --dry-run=client \
+    			  -o yaml | kubectl apply -f -
                         '
+			kubectl create service clusterip mycicd \
+    			  --tcp=80:3000 \
+   			  --dry-run=client \
+    			  -o yaml | kubectl apply -f -
                     """
                 }
             }
