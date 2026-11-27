@@ -44,6 +44,7 @@ pipeline {
         stage('Install Dependencies & Unit Test') {
             steps {
                 echo "Installing npm packages and executing Jest tests..."
+		sh 'npm install'
                 sh 'npm ci'
                 // Runs tests and generates the coverage/lcov.info file required by SonarQube
                 sh 'npm test' 
