@@ -1,8 +1,9 @@
 pipeline {
     // Force this pipeline to execute ONLY on the agent we configured, keeping the master clean
-    agent {
+/*    agent {
         label 'docker-agent'
-    }
+    }*/
+	agent any
 
 
     environment {
