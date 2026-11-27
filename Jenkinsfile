@@ -108,42 +108,59 @@ pipeline {
             }
         }
 
+	stage('Deploy to Production EC2') {
 
-        stage('Deploy to Production EC2') {
-            steps {
-                echo "Initiating remote deployment to Production Server..."
-                // Use the SSH agent plugin to load the private key for the Prod Server
-                sshagent(credentials: ['prod-ssh-key']) {
-                    sh """
-                        # 1. Transfer the docker-compose.yml file to the target server
-                        #scp -o StrictHostKeyChecking=no docker-compose.yml ${PROD_USER}@${PROD_SERVER_IP}:/home/${PROD_USER}/docker-compose.yml
-                        
-                        # 2. Execute SSH commands to pull the new image and restart the containers
-                        #ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_SERVER_IP} '
-                            export DOCKER_IMAGE=${FULL_IMAGE}
-                            
-                            # Pull the specific new image
-                        #    docker pull ${FULL_IMAGE}
-                            
-                            # Restart the service with Docker Compose (down and up)
-                         #   docker-compose -f /home/${PROD_USER}/docker-compose.yml up -d --remove-orphans
-                            
-                            # Prune old images to prevent disk space exhaustion
-                         #   docker image prune -a -f --filter "until=24h"
-			kubectl create deployment mycicd \
-  			  --image=$FULL_IMAGE \
-   			  --replicas=2 \
-    			  --dry-run=client \
-    			  -o yaml | kubectl apply -f -
-                        '
-			kubectl create service clusterip mycicd \
-    			  --tcp=80:3000 \
-   			  --dry-run=client \
-    			  -o yaml | kubectl apply -f -
-                    """
-                }
-            }
-        }
+    steps {
+
+        echo 'Initiating remote deployment to Production Server...'
+
+        sshagent(credentials: ['prod-ssh-key']) {
+
+            sh '''
+                set -eu
+
+                ssh -o StrictHostKeyChecking=yes \
+                    -o BatchMode=yes \
+                    -o ConnectTimeout=10 \
+                    "$PROD_USER@$PROD_SERVER_IP" \
+                    bash -s -- "$FULL_IMAGE" <<'EOF'
+
+                    set -euo pipefail
+
+                    echo "Connected to Kubernetes server"
+
+                    hostname
+                    whoami
+
+                    echo "Deploying image: $FULL_IMAGE"
+
+                    kubectl create deployment mycicd \
+                        --image="$FULL_IMAGE" \
+                        --replicas=2 \
+                        --dry-run=client \
+                        -o yaml | kubectl apply -f -
+
+                    kubectl create service clusterip mycicd \
+                        --tcp=80:3000 \
+                        --dry-run=client \
+                        -o yaml | kubectl apply -f -
+
+                    kubectl rollout status deployment/mycicd \
+                        --timeout=180s
+
+                    kubectl get deployment mycicd
+
+                    kubectl get pods -l app=mycicd
+
+                    kubectl get svc mycicd
+
+EOF
+	            '''
+        		}
+    		}
+	}
+
+
 
 
         stage('Production Health Check') {
